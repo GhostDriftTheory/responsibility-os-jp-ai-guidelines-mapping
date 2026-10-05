@@ -1,6 +1,30 @@
 # Responsibility OS × AI事業者ガイドライン
 
+[![Lean verification](https://github.com/GhostDriftTheory/responsibility-os-jp-ai-guidelines-mapping/actions/workflows/lean.yml/badge.svg)](https://github.com/GhostDriftTheory/responsibility-os-jp-ai-guidelines-mapping/actions/workflows/lean.yml)
+
 **From governance principles to evidence-bound execution across the AI value chain.**
+
+**Repository:** `GhostDriftTheory/responsibility-os-jp-ai-guidelines-mapping`
+
+**Verification status:** CI builds `JPAIGuidelinesMapping.lean` with Lean 4.26.0 and checks
+the source with warnings treated as errors. The `Lean verification / verify` result
+for the exact commit is authoritative. Verified commit:
+`81182a03e13d2da3a2080210db02183f2e99238f`.
+
+Verified commit:
+81182a03e13d2da3a2080210db02183f2e99238f
+
+JPAIGuidelinesMapping.lean SHA-256:
+db1bc2c9de89cf8f7581c6e148d48d12a17ea17e60f82a6918385a0eaf043dcc
+
+Lean:
+4.26.0
+
+Responsibility OS Kernel:
+9b4e7d25572f3a1e114508bdf1a2d62349e83993
+
+mathlib:
+2df2f0150c275ad53cb3c90f7c98ec15a56a1a67
 
 ## 指針への「対応表」から、実行に結び付く証拠連鎖へ
 
