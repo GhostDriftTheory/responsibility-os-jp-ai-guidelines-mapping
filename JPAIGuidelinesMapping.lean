@@ -163,9 +163,9 @@ structure Attempt (B : Type uB) (U : Type uU) where
   path : List B
   use : U
   request : Request
-  at : Nat
+  observedAt : Nat
   retainUntil : Nat
-  validWindow : at ≤ retainUntil
+  validWindow : observedAt ≤ retainUntil
 
 /-- Adapter signatures only. `S` and `I` have no public representation here.
 `current` covers the application's justified freshness/reuse conditions.
@@ -373,10 +373,10 @@ theorem prune_twice (earlier later : Nat) (hTime : earlier ≤ later)
   | cons r rs ih =>
       by_cases hLater : later ≤ r.attempt.retainUntil
       · have hEarlier := Nat.le_trans hTime hLater
-        simpa [Accountability.pruneExpired, hLater, hEarlier] using congrArg (List.cons r) ih
+        simp [Accountability.pruneExpired, hLater, hEarlier, ih]
       · by_cases hEarlier : earlier ≤ r.attempt.retainUntil
-        · simpa [Accountability.pruneExpired, hLater, hEarlier] using ih
-        · simpa [Accountability.pruneExpired, hLater, hEarlier] using ih
+        · simp [Accountability.pruneExpired, hLater, hEarlier, ih]
+        · simp [Accountability.pruneExpired, hLater, hEarlier, ih]
 
 def SameAt (now : Nat) (s t : State E C B U S) : Prop :=
   s.control = t.control ∧ s.halted = t.halted ∧
@@ -609,8 +609,8 @@ theorem monitoring_preserves_occurrences (context : C) (plan : MonitoringPlan E 
   | nil => simp [supportedRecords, reviewRecords]
   | cons r rs ih =>
       cases h : passesPlan context plan r <;>
-        simpa [supportedRecords, reviewRecords, h, Nat.add_comm, Nat.add_left_comm,
-          Nat.add_assoc] using congrArg Nat.succ ih
+        simp [supportedRecords, reviewRecords, h, ih, Nat.add_comm, Nat.add_left_comm,
+          Nat.add_assoc]
 
 theorem failed_predicate_is_reviewed (context : C) (plan : MonitoringPlan E C B U)
     (history : List (Record E C B U)) (r : Record E C B U)
@@ -903,7 +903,7 @@ theorem nonvacuous_reference_chain :
   refine ⟨?_, retained_execution, minimal_execution,
     ResponsibilityOS.CollapseCounterexample.trace_policy_relevant⟩
   apply no_silent_responsibility_gap toy toy_laws view_laws false
-    (by intro b h; cases h) commands 0 (by decide) plan (𝟭 EObj)
+    (by intro b h; cases h) commands 0 (by simp [commands, History.CutoffsWithin]) plan (𝟭 EObj)
   intro r _hMem _hExecuted X Y f g hRelevant hEqual
   exact r.policyAt.sound hRelevant hEqual
 
