@@ -1,0 +1,50 @@
+name: Lean verification
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install elan
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sSfL https://github.com/leanprover/elan/releases/download/v4.2.2/elan-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          ./elan-init -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Resolve dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake update
+
+      - name: Get Mathlib cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake exe cache get
+
+      - name: Build mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake build JPAIGuidelinesMapping
+
+      - name: Verify source with warnings as errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean -DwarningAsError=true JPAIGuidelinesMapping.lean
