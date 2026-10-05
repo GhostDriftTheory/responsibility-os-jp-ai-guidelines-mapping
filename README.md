@@ -6,25 +6,7 @@
 
 **Repository:** `GhostDriftTheory/responsibility-os-jp-ai-guidelines-mapping`
 
-**Verification status:** CI builds `JPAIGuidelinesMapping.lean` with Lean 4.26.0 and checks
-the source with warnings treated as errors. The `Lean verification / verify` result
-for the exact commit is authoritative. Verified commit:
-`81182a03e13d2da3a2080210db02183f2e99238f`.
-
-Verified commit:
-81182a03e13d2da3a2080210db02183f2e99238f
-
-JPAIGuidelinesMapping.lean SHA-256:
-db1bc2c9de89cf8f7581c6e148d48d12a17ea17e60f82a6918385a0eaf043dcc
-
-Lean:
-4.26.0
-
-Responsibility OS Kernel:
-9b4e7d25572f3a1e114508bdf1a2d62349e83993
-
-mathlib:
-2df2f0150c275ad53cb3c90f7c98ec15a56a1a67
+**Verification status:** CI builds `JPAIGuidelinesMapping.lean` with Lean 4.26.0 and checks the source with warnings treated as errors. The `Lean verification / verify` result for the exact commit is authoritative. An initial successful verification of the current Lean source was recorded at commit `81182a03e13d2da3a2080210db02183f2e99238f`.
 
 ## 指針への「対応表」から、実行に結び付く証拠連鎖へ
 
@@ -41,7 +23,7 @@ AIの開発・提供・利用をつなぐ主体間の引渡しを、文書・証
 | 項目 | 状態 |
 |---|---|
 | 公開内容 | 単一Leanファイル、対応表、配置設定。具体的な業務パケット形式・受領確認形式・承認更新アルゴリズムは含めない |
-| Leanコンパイル・証明検査 | **未完了（2026年10月5日）**。`lake build JPAIGuidelinesMapping`とwarning-as-error検査の起動を試みたが、実行環境に`lake`がなく終了コード127。公式配布元からの環境取得も名前解決失敗で進められなかった。Leanによる型検査・証明検査は開始できておらず、検証済みとは表示しない |
+| Leanコンパイル・証明検査 | **成功（2026年10月5日）**。GitHub Actionsで`lake build JPAIGuidelinesMapping`と`lake env lean -DwarningAsError=true JPAIGuidelinesMapping.lean`の両方が成功。現在のLeanソースに対する初回成功参照コミットは`81182a03e13d2da3a2080210db02183f2e99238f` |
 | 前版の有限モデル検査 | **本改訂の検証結果として引き継がない**。公開モデルと前提が変更されているため、前版のPython検査件数・成功を本版の証明に用いない |
 | ガイドラインの対象版 | 提供された対応表と同じ、第1.2版・2026年3月31日公表の版を対象とする [S1] |
 | 条項対応の根拠 | 提供された前版READMEの「最終版との条項番号・主体構造・表1の照合済み」という報告を引き継ぐ。**本改訂では公式最終本文の再取得・独立した逐条照合は行っていない**。脚注・細則を含む全文の逐語照合済みとも扱わない |
@@ -151,7 +133,7 @@ P-7(ii)を一般的な技術文書化だけの条項として扱わず、構成�
 | 重要な責任証拠を落とす出力 | 非空Policyが要求する区別を失う | `Examples.operation_only_view_fails` |
 | 未来の基準時刻による削除 | 後から保持対象を取り戻せない反例 | `History.future_cutoff_counterexample` |
 
-最小モデル以外の行は、元から存在する抽象定理・反例への参照です。具体的な業務用チェッカーや失効方式を例として再公開しません。これらの証明項は本改訂でのLeanビルド・厳格検査を完了しておらず、前版のPython有限テストも本改訂の検証結果として使いません。
+最小モデル以外の行は、元から存在する抽象定理・反例への参照です。具体的な業務用チェッカーや失効方式を例として再公開しません。本改訂のLeanソースはGitHub Actionsでビルドとwarning-as-errorによる厳格検査を通過しています。前版のPython有限テストは、本改訂の検証結果としては用いません。
 
 ## 5. EU版との関係と公開範囲
 
@@ -177,7 +159,7 @@ P-7(ii)を一般的な技術文書化だけの条項として扱わず、構成�
 
 ## 7. 配置と検証
 
-リポジトリ名の案は **`responsibility-os-jp-ai-guidelines-mapping`** です。この配布によってGitHubへの作成・アップロードは行っていません。
+公開リポジトリは **`GhostDriftTheory/responsibility-os-jp-ai-guidelines-mapping`** です。
 
 ```text
 JPAIGuidelinesMapping.lean   # 公開抽象仕様・証明・最小存在証人
@@ -204,7 +186,17 @@ lake build JPAIGuidelinesMapping
 lake env lean -DwarningAsError=true JPAIGuidelinesMapping.lean
 ```
 
-公開時は対象コミットの **`Build mapping` と `Verify source with warnings as errors` の両方**が成功したことを確認します。前版の緑色表示・検証記録を使い回しません。成功コミット、ソースのSHA-256、Leanの版、解決された依存を記録してください。
+公開時は、README冒頭のCIバッジから対象コミットの **`Build mapping` と `Verify source with warnings as errors` の両方**が成功していることを確認します。前版の緑色表示・検証記録を使い回しません。現在のLeanソースについて確認済みの再現用基準は次のとおりです。
+
+| 検証項目 | 値 |
+|---|---|
+| 初回成功参照コミット | `81182a03e13d2da3a2080210db02183f2e99238f` |
+| `JPAIGuidelinesMapping.lean` SHA-256 | `db1bc2c9de89cf8f7581c6e148d48d12a17ea17e60f82a6918385a0eaf043dcc` |
+| Lean | `4.26.0` |
+| Responsibility OS Kernel | `9b4e7d25572f3a1e114508bdf1a2d62349e83993` |
+| mathlib | `2df2f0150c275ad53cb3c90f7c98ec15a56a1a67` |
+
+CIログでは、Lean 4.26.0の取得、上記Kernel・mathlib revisionのcheckout、`lake build JPAIGuidelinesMapping`の成功、warning-as-errorによるソース検査の成功を確認しています。READMEだけを更新した場合も新しいコミットでCIが再実行されるため、**最新コミットの検証状態はバッジ／Actionsの結果を正本**とします。`lake-manifest.json`は`lake update`で生成される解決結果ですが、現時点ではリポジトリへ固定保存していません。
 
 本版には実装側の局所条件が明示的な引数としてあります。CI成功後も、非公開実装の局所条件の立証・実装対応・ガイドライン解釈の妥当性まで確認済みになるわけではありません。
 
@@ -228,7 +220,7 @@ This is a **public abstract assurance profile**, not a compliance certificate or
 
 `no_silent_responsibility_gap` derives a finite-history composition result: exact retained-history equality against a no-pruning reference run, validation provenance strictly before the captured execution, all-stage scope and binding consequences, preservation of each record's **historical** policy, and an exhaustive current-support/review partition. Policy-aware views are permitted; full recoverability is only a sufficient alternative. The headline conclusion is not assumed for every output record.
 
-The concrete checker is not verified by hiding its body. An adapter must independently discharge the declared local obligations and establish correspondence to deployment. The source retains only a deliberately degenerate existence witness: context, basis, use, actor and validation input are singleton types, and control has two states. It demonstrates satisfiable local obligations, an actually retained execution and the kernel's nonempty trace policy, not a production adapter or a concrete multi-actor protocol. **This revision has not been compiled**: on October 5, 2026, both requested verification commands could not start because Lake was absent (exit 127); toolchain acquisition was also blocked by DNS resolution failure. Previous finite Python-model results are not reused as verification of this revision.
+The concrete checker is not verified by hiding its body. An adapter must independently discharge the declared local obligations and establish correspondence to deployment. The source retains only a deliberately degenerate existence witness: context, basis, use, actor and validation input are singleton types, and control has two states. It demonstrates satisfiable local obligations, an actually retained execution and the kernel's nonempty trace policy, not a production adapter or a concrete multi-actor protocol. **This Lean source has passed GitHub Actions build verification and a warnings-as-errors source check with Lean 4.26.0.** The exact-commit CI result remains authoritative; successful verification of the public formalization does not certify any undisclosed adapter implementation or establish full guideline compliance. Previous finite Python-model results are not reused as verification of this revision.
 
 The guideline crosswalk inherits the supplied README's report of final-v1.2 clause-number/actor-structure reconciliation. This abstraction revision did not independently re-fetch or reconcile the final guideline text. Formal source checking, guideline interpretation and private implementation verification remain separate.
 
