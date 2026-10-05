@@ -373,10 +373,10 @@ theorem prune_twice (earlier later : Nat) (hTime : earlier ≤ later)
   | cons r rs ih =>
       by_cases hLater : later ≤ r.attempt.retainUntil
       · have hEarlier := Nat.le_trans hTime hLater
-        simp [Accountability.pruneExpired, hLater, hEarlier, ih]
+        simpa [Accountability.pruneExpired, hLater, hEarlier] using congrArg (List.cons r) ih
       · by_cases hEarlier : earlier ≤ r.attempt.retainUntil
-        · simp [Accountability.pruneExpired, hLater, hEarlier, ih]
-        · simp [Accountability.pruneExpired, hLater, hEarlier, ih]
+        · simpa [Accountability.pruneExpired, hLater, hEarlier] using ih
+        · simpa [Accountability.pruneExpired, hLater, hEarlier] using ih
 
 def SameAt (now : Nat) (s t : State E C B U S) : Prop :=
   s.control = t.control ∧ s.halted = t.halted ∧
@@ -609,8 +609,8 @@ theorem monitoring_preserves_occurrences (context : C) (plan : MonitoringPlan E 
   | nil => simp [supportedRecords, reviewRecords]
   | cons r rs ih =>
       cases h : passesPlan context plan r <;>
-        simp [supportedRecords, reviewRecords, h, ih, Nat.add_comm, Nat.add_left_comm,
-          Nat.add_assoc]
+        simpa [supportedRecords, reviewRecords, h, Nat.add_comm, Nat.add_left_comm,
+          Nat.add_assoc] using congrArg Nat.succ ih
 
 theorem failed_predicate_is_reviewed (context : C) (plan : MonitoringPlan E C B U)
     (history : List (Record E C B U)) (r : Record E C B U)
