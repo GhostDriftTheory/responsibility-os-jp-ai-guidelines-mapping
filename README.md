@@ -6,7 +6,7 @@
 
 **Repository:** `GhostDriftTheory/responsibility-os-jp-ai-guidelines-mapping`
 
-**Verification status:** CI builds `JPAIGuidelinesMapping.lean` with Lean 4.26.0 and checks the source with warnings treated as errors. The `Lean verification / verify` result for the exact commit is authoritative. An initial successful verification of the current Lean source was recorded at commit `81182a03e13d2da3a2080210db02183f2e99238f`.
+**Verification status:** The updated CI builds `JPAIGuidelinesMapping` with Lean 4.26.0 and separately checks **both** `JPAIGuidelinesMapping.lean` and `AISICompositionalAssuranceCase.lean` with warnings treated as errors. The `Lean verification / verify` result for the **exact commit and both source checks** is authoritative. The supplied README records an initial successful verification of the existing mapping at commit `81182a03e13d2da3a2080210db02183f2e99238f`; that result does not verify the new file. **Compilation of the addition has not been run in the preparation environment.**
 
 ## 指針への「対応表」から、実行に結び付く証拠連鎖へ
 
@@ -18,12 +18,16 @@ AIの開発・提供・利用をつなぐ主体間の引渡しを、文書・証
 
 **対象は選択した技術的要件の参照仕様です。ガイドライン全体への準拠、法的責任の確定・免責、AIの現実世界での安全性を証明するものではありません。非公開の検査器や制御実装が局所条件を満たすことは、別途立証する必要があります。**
 
+**AISIとの技術接続：** [公開アシュアランスケース（2.1節）](#aisi-assurance-case)では、組織を横断する証拠の連続性、利用範囲、実行前の再検証を、評価上の主張・成立前提・Lean定理・未検証事項に分けて提示します。追加ファイルは既存の公開定理の帰結だけを扱い、非公開の実装方法は追加しません。AISIのCCAS構想や「観測と制御」との関係は、当社による独立した技術的対応づけです。[S4][S5]
+
 ### この配布物の確認状態
 
 | 項目 | 状態 |
 |---|---|
-| 公開内容 | 単一Leanファイル、対応表、配置設定。具体的な業務パケット形式・受領確認形式・承認更新アルゴリズムは含めない |
-| Leanコンパイル・証明検査 | **成功（2026年10月5日）**。GitHub Actionsで`lake build JPAIGuidelinesMapping`と`lake env lean -DwarningAsError=true JPAIGuidelinesMapping.lean`の両方が成功。現在のLeanソースに対する初回成功参照コミットは`81182a03e13d2da3a2080210db02183f2e99238f` |
+| 公開内容 | 既存Leanファイルと追加の抽象的アシュアランスケース、対応表、配置設定。具体的な業務パケット形式・受領確認形式・承認更新アルゴリズムは含めない |
+| 既存マッピングの確認記録 | 提供READMEでは**成功（2026年10月5日）**と記録。`lake build JPAIGuidelinesMapping`と`lake env lean -DwarningAsError=true JPAIGuidelinesMapping.lean`の両方が成功した初回参照コミットは`81182a03e13d2da3a2080210db02183f2e99238f`。今回、既存Leanファイルは変更しない |
+| 追加アシュアランスケースの確認状態 | **本配布の作成環境ではコンパイル未実行**。更新CIの`Verify AISI assurance case with warnings as errors`で検査する。旧コミットの成功・既存ファイルだけのビルド成功を、追加ファイルの検証成功として扱わない |
+| AISI一次資料の確認範囲 | ビジョンペーパー第2.0版の4.2節（特に本文36–38ページ）と、評価観点ガイド第1.20版の3.11節（本文35–38ページ）を参照。以下の対応づけは当社の分析であり、AISIによる適合性判断ではない [S4][S5] |
 | 前版の有限モデル検査 | **本改訂の検証結果として引き継がない**。公開モデルと前提が変更されているため、前版のPython検査件数・成功を本版の証明に用いない |
 | ガイドラインの対象版 | 提供された対応表と同じ、第1.2版・2026年3月31日公表の版を対象とする [S1] |
 | 条項対応の根拠 | 提供された前版READMEの「最終版との条項番号・主体構造・表1の照合済み」という報告を引き継ぐ。**本改訂では公式最終本文の再取得・独立した逐条照合は行っていない**。脚注・細則を含む全文の逐語照合済みとも扱わない |
@@ -89,6 +93,54 @@ Semantics      主体・範囲・証拠拘束・引渡しの意味上の観測�
 
 P-7(ii)を一般的な技術文書化だけの条項として扱わず、構成・処理過程にはP-6(i)、規約等にはP-7(ii)を対応させる整理を維持しています。第2部Eについては、選ばれた条件を運用・評価・再検証へ接続する部分が対象です。組織のアジャイル・ガバナンス全体や、改善活動の実施までを証明したという意味ではありません。[S1][S2]
 
+<a id="aisi-assurance-case"></a>
+
+## 2.1 AISIとの技術接続｜公開アシュアランスケース
+
+**評価を受けたという事実だけで、別の主体・用途・時点での採用を無条件に許可しない。何が引き継がれ、何を再確認すべきかを、公開された前提と証明に結び付けます。**
+
+### 一次資料の論点と、本リポジトリの寄与を分ける
+
+AISIの事業実証WGビジョンペーパー第2.0版は、評価ゴールごとに証拠を用いる論証構造型アプローチを検討しています。CCASでは、組織内の階層だけでなく、組織間のトラストチェーンや責任分担も含む評価を構想しています。[S4]
+
+また、評価観点ガイド第1.20版の3.11節は、AIエージェントの観測と制御を扱い、権限、動作履歴、人の介入・停止、外部環境との相互作用を評価項目例に挙げています。[S5]
+
+**本リポジトリが提示するのは、これらの論点に関連する「証拠・利用条件・再検証・採用制御の論理的な接続」をレビューするための、限定された形式的根拠です。** AISI資料がこのデータ構造・定理・制御方式を指定しているという意味ではありません。
+
+| AISI一次資料の論点 | 本リポジトリで検討できる技術的接点 | この成果だけでは確定しないこと |
+|---|---|---|
+| 論証構造型アプローチ：評価ゴールと証拠の関係（[S4] 4.2.1–4.2.2、本文36–37ページ） | 下表の主張IDから、局所的前提・Lean定理・結論へたどれる論証構造 | 評価ゴールの十分性、規範の解釈、評価証拠そのものの内容・真正性 |
+| CCAS：階層間・組織間の評価、トラストチェーン、責任分担（[S4] 4.2.3、本文38ページ・図4-5） | 任意の有限経路における証拠拘束と範囲非拡大、実行時の主体経路との一致 | CCAS全体の実装、全階層・分岐合流のモデル化、組織の評価結果の統合、法的責任の移転や配分 |
+| AIエージェントの観測と制御（[S5] 3.11.1–3.11.2、本文35–38ページ） | 既存参照ゲートの採用・保留・停止、履歴、条件変更後の再検証 | 実エージェント接続、権限機構やイベント収集の完全性、異常検知、人の介入手段、実機の安全停止 |
+
+### 主張・前提・証明・未検証範囲を一体で示す
+
+追加ファイルは [`AISICompositionalAssuranceCase.lean`](AISICompositionalAssuranceCase.lean) です。以下の追加宣言名には `AISICompositionalAssuranceCase.` が付きます。**C0–C6は本リポジトリ独自のレビュー用IDであり、AISIの条項番号・評価番号ではありません。**
+
+| ID・レビューする主張 | 明示する主な前提 | 追加ファイルの証明根拠 | 外部で確認する事項 |
+|---|---|---|---|
+| C0：個別の証拠条件から、有限履歴全体の保証を組み立てる | `AdapterLaws`、`HandoffLaws`、初期未承認、削除基準の範囲、記録時のPolicyを保つ出力 | `compositional_assurance_case`。既存の`no_silent_responsibility_gap`の結論を維持し、不成立時の非実行と条件成立時の実行を結合 | 局所条件を満たす実装の立証、実行とモデルの対応 |
+| C1：経路をつないでも、各段階の裏付けを失わない | 接続点が一致した有効な有限経路、`HandoffLaws`、起点の証拠拘束、終点の利用範囲 | `composed_paths_preserve_bound_support`、`execution_requires_every_stage` | 主体・証拠・用途の意味付け、観測経路と実際の引渡しの対応 |
+| C2：実行記録を、それより前に受理された再検証へたどる | 局所条件、初期未承認、対象履歴中の実行記録、当時のPolicyを保つ出力 | `executed_record_has_prior_validation`。既存の実行保証と、実行前の接頭列内にある再検証の発生位置を結合 | 入力されなかった実イベント、時計、再検証処理の妥当性 |
+| C3：確認条件の不成立を、下流の実行許可にすり替えない | 検査器の健全性。段階ごとの拘束・範囲には`HandoffLaws`も必要 | `unsupported_stage_cannot_execute`、`inadmissible_attempt_cannot_execute`。明示的な保留・停止には`withhold_cannot_execute`、`stop_persists_through_history` | 不成立・欠測の検出、ゲートを迂回しない実装、人の介入と物理的停止 |
+| C4：条件を元に戻しただけでは、許可を復活させない | `AdapterLaws`の再検証来歴・条件変更時の不許可義務 | `profile_round_trip_cannot_reauthorize`、`failed_revalidation_cannot_execute` | 条件変更の観測、承認更新・失効の実装。後から再検証した際の旧資料の扱い |
+| C5：保持記録と証拠の区別を維持し、再確認対象を取り落とさない | C0の前提。特に削除基準と当時のPolicyの保存 | `compositional_assurance_case`の`HistoryAssurance`部分：保持リスト一致、過去の実行保証、排他的・網羅的な監視分類、件数保存、現在文脈・文書・計画の整合 | 永続保存、改ざん耐性、監視用`current`・`check`の健全性、是正の実施 |
+| C6：止めるだけでなく、確認が成立した利用を許可する | 非停止、明示的な`allow`要求、実際の採用検査が`true` | `successful_check_permits_execution`、`compositional_assurance_case`の肯定側 | 任意の実装が正常要求を受理すること、可用性・生存性・検査器の完全性 |
+
+C1は、既存の`ValueChain.valid_append`、`every_stage_is_bound`、`use_supported_at_every_handoff`の合成です。C2は、既存の`execution_has_prior_assurance`と`History.origin_is_validation_occurrence`を組み合わせます。C0は、既存の主定理から得る`HistoryAssurance`をそのまま保持します。**履歴全体が保証済みであるという結論を、新たな入力前提に置き換えてはいません。**
+
+C3の「不成立」は、形式モデルでその条件が成り立たないことを指します。実装の証明書が未提出であることを自動的に検知して停止する、という意味ではありません。C6も、`Admission`が成立すれば必ず具体的な検査器が`true`を返すとは証明していません。これらの区別は、評価者が形式証明の範囲を実運用へ過大に広げないために必要です。
+
+正常な実行と非空の証拠Policyが両立することは、**既存の**`Examples.nonvacuous_reference_chain`を参照します。今回、最小モデルを拡張せず、新しい業務例・複数主体の具体実装・実データPoCは追加していません。主体数、業種、用途は一般定理の型・前提の範囲にとどまり、特定の例に固定しません。
+
+### 評価者が最初に確認する箇所
+
+まず、C0の定理の引数で、実装側に残された証明義務を確認します。次に、C1・C2で、その局所条件から主体横断の裏付けと実行前の再検証がどう導かれるかを確認します。C3・C4・C6では不成立側と肯定側を区別し、C5と本READMEの6節で証拠の保存・現在性・実装対応の限界を確認できます。証明検査の再実行手順は7節にまとめています。
+
+**公開範囲は既存の抽象インターフェースと定理の帰結に限定します。** 追加ファイルは新しい`structure`・`def`・具体的なアダプタを定義せず、`JPAIGuidelinesMapping.lean`、`Examples.toy`、Kernel、コールドチェーンPoCを変更しません。定理の結合とその説明は新たに公開される内容ですが、非公開のパケット形式、検査アルゴリズム、承認更新・失効方式を持ち込みません。
+
+本ケースは株式会社AIアシュアランスによる独立した提案です。AISIとの公式連携・共同研究・認定・認証、CCASへの適合またはCCAS全体の形式化を示しません。公開範囲の抑制自体を、特許・営業秘密上の安全性の保証とも扱いません。今回の追加は、AI事業者ガイドラインの既存対応表に対する独立した逐条再照合を行ったものではありません。
+
 ## 3. 主定理の正確な意味
 
 ### `no_silent_responsibility_gap`
@@ -133,7 +185,7 @@ P-7(ii)を一般的な技術文書化だけの条項として扱わず、構成�
 | 重要な責任証拠を落とす出力 | 非空Policyが要求する区別を失う | `Examples.operation_only_view_fails` |
 | 未来の基準時刻による削除 | 後から保持対象を取り戻せない反例 | `History.future_cutoff_counterexample` |
 
-最小モデル以外の行は、元から存在する抽象定理・反例への参照です。具体的な業務用チェッカーや失効方式を例として再公開しません。本改訂のLeanソースはGitHub Actionsでビルドとwarning-as-errorによる厳格検査を通過しています。前版のPython有限テストは、本改訂の検証結果としては用いません。
+最小モデル以外の行は、元から存在する抽象定理・反例への参照です。具体的な業務用チェッカーや失効方式を例として再公開しません。既存の`JPAIGuidelinesMapping.lean`について、提供READMEはGitHub Actionsのビルドとwarning-as-errorによる厳格検査の成功を記録しています。この確認記録は追加ファイルの検証結果には流用しません。前版のPython有限テストは、本改訂の検証結果としては用いません。
 
 ## 5. EU版との関係と公開範囲
 
@@ -162,14 +214,17 @@ P-7(ii)を一般的な技術文書化だけの条項として扱わず、構成�
 公開リポジトリは **`GhostDriftTheory/responsibility-os-jp-ai-guidelines-mapping`** です。
 
 ```text
-JPAIGuidelinesMapping.lean   # 公開抽象仕様・証明・最小存在証人
-README.md                  # 対応表・前提・結論・公開範囲
-lakefile.toml              # 既存日本版と同じ固定依存・ビルド対象
-lean-toolchain             # Lean 4.26.0
-.github/workflows/lean.yml  # ビルドとwarning-as-errorのソース検査
+JPAIGuidelinesMapping.lean              # 既存の抽象仕様・主定理・最小モデル：変更しない
+AISICompositionalAssuranceCase.lean    # 新規：既存定理を用いた公開アシュアランスケース
+README.md                             # 更新：AISI接続、論証表、前提と検証範囲
+lakefile.toml                         # 変更しない：既存の固定依存・ビルド対象
+lean-toolchain                        # 変更しない：Lean 4.26.0
+.github/workflows/lean.yml             # 更新：両Leanソースの検査と検証対象の記録
 ```
 
-**日本版をすでに配置している場合は、LeanとREADMEの2ファイルを同時に差し替えます。** 添付されている他の3ファイルは前回の日本版から変更していません。初回配置は5ファイルを上の構造のままリポジトリ直下に置きます。EU版を上書きせず、旧版ソース・旧README・バックアップを公開用ZIPやリポジトリへ併記しないでください。
+**今回の更新は3ファイルだけです。** `README.md`と`.github/workflows/lean.yml`を置き換え、`AISICompositionalAssuranceCase.lean`をリポジトリ直下へ追加します。既存の`JPAIGuidelinesMapping.lean`、`lakefile.toml`、`lean-toolchain`はそのまま使います。追加ファイルも含めた3件を同じコミットへ反映してください。配布ZIPは更新用の3ファイルだけを含み、単独で初回環境を構成する一式ではありません。
+
+EU版、Kernel、コールドチェーンPoCは変更しません。旧版ソースや非公開のバックアップを、この更新用配布物や公開リポジトリへ追加する必要もありません。
 
 | 依存 | 固定値 |
 |---|---|
@@ -177,40 +232,59 @@ lean-toolchain             # Lean 4.26.0
 | mathlib | `2df2f0150c275ad53cb3c90f7c98ec15a56a1a67` |
 | Lean toolchain | `leanprover/lean4:v4.26.0` |
 
-Git・elanがある環境で次を実行します。
+Git・elanがある環境で、既存リポジトリのルートから次を実行します。
 
 ```sh
 lake update
 lake exe cache get
 lake build JPAIGuidelinesMapping
 lake env lean -DwarningAsError=true JPAIGuidelinesMapping.lean
+lake env lean -DwarningAsError=true AISICompositionalAssuranceCase.lean
 ```
 
-公開時は、README冒頭のCIバッジから対象コミットの **`Build mapping` と `Verify source with warnings as errors` の両方**が成功していることを確認します。前版の緑色表示・検証記録を使い回しません。現在のLeanソースについて確認済みの再現用基準は次のとおりです。
+**`lake build JPAIGuidelinesMapping`だけでは、追加ファイルの検査は完了しません。** `lakefile.toml`を変更せず、最後のコマンドで追加ソースを直接検査する構成です。CIにもその独立した検査ステップを追加しています。
+
+公開時は、対象コミットの`Lean verification / verify`で、次の3ステップがすべて成功していることを確認します。
+
+| CIステップ | 対象 |
+|---|---|
+| `Build mapping` | 既存マッピングと固定依存のビルド |
+| `Verify source with warnings as errors` | 既存`JPAIGuidelinesMapping.lean`の厳格検査 |
+| `Verify AISI assurance case with warnings as errors` | 新規`AISICompositionalAssuranceCase.lean`の厳格検査 |
+
+最後の`Record verification basis`は、全検査が成功した実行について、コミット、Leanの版、両Leanソース・設定ファイルのSHA-256と、実際に解決した依存の情報をGitHub Actionsのジョブサマリーへ記録します。これは公開抽象モデルの検査対象を特定するための記録であり、製品認証ではありません。
+
+元のREADMEに記載された**既存マッピングの再現用基準**は次のとおりです。追加ファイルの成功実績とは区別します。
 
 | 検証項目 | 値 |
 |---|---|
-| 初回成功参照コミット | `81182a03e13d2da3a2080210db02183f2e99238f` |
+| 既存マッピングの初回成功参照コミット | `81182a03e13d2da3a2080210db02183f2e99238f` |
 | `JPAIGuidelinesMapping.lean` SHA-256 | `db1bc2c9de89cf8f7581c6e148d48d12a17ea17e60f82a6918385a0eaf043dcc` |
 | Lean | `4.26.0` |
 | Responsibility OS Kernel | `9b4e7d25572f3a1e114508bdf1a2d62349e83993` |
 | mathlib | `2df2f0150c275ad53cb3c90f7c98ec15a56a1a67` |
 
-CIログでは、Lean 4.26.0の取得、上記Kernel・mathlib revisionのcheckout、`lake build JPAIGuidelinesMapping`の成功、warning-as-errorによるソース検査の成功を確認しています。READMEだけを更新した場合も新しいコミットでCIが再実行されるため、**最新コミットの検証状態はバッジ／Actionsの結果を正本**とします。`lake-manifest.json`は`lake update`で生成される解決結果ですが、現時点ではリポジトリへ固定保存していません。
+**本更新の作成環境ではLeanコンパイラを実行できず、追加ソースのコンパイル成功は未確認です。** 検査コマンド・公開済み宣言との対応・ワークフローを整えた状態であり、旧版の成功や静的な内容確認を追加ソースの証明検査成功と表示しません。公開後は、対象コミットの上記3ステップの実行結果を正本とします。`lake-manifest.json`は`lake update`で生成される解決結果で、今回も新規のコミット対象にはしません。
 
-本版には実装側の局所条件が明示的な引数としてあります。CI成功後も、非公開実装の局所条件の立証・実装対応・ガイドライン解釈の妥当性まで確認済みになるわけではありません。
+CI成功後も、非公開実装の局所条件の立証、現実の業務との対応、ガイドライン解釈、AISI資料との技術的対応づけまで検証済みになるわけではありません。
 
 ## 8. 参照元と版の扱い
 
 [S1]: https://www.meti.go.jp/shingikai/mono_info_service/ai_shakai_jisso/20260331_report.html
 [S2]: https://www.ipa.go.jp/disc/committee/begoj9000000egny-att/20260305_009_04_00.pdf
 [S3]: https://www.ipa.go.jp/disc/committee/begoj9000000egny-att/20260305_009_11_00.pdf
+[S4]: https://aisi.go.jp/output/output_information/261006/
+[S5]: https://aisi.go.jp/output/output_information/260707/
 
 **[S1] 対象版の公表先。** 総務省・経済産業省「AI事業者ガイドライン（第1.2版）」、2026年3月31日。最終版本編の参照先として、提供READMEは[経済産業省PDF](https://www.meti.go.jp/shingikai/mono_info_service/ai_shakai_jisso/pdf/20260331_1.pdf)と[総務省PDF](https://www.soumu.go.jp/main_content/001064279.pdf)を挙げています。同READMEによる条項番号・主体構造・表1の照合報告を引き継ぎますが、この抽象化改訂で同本文を独立に再照合したとは表示しません。
 
 **[S2] 初稿の詳細対応に用いられた一次資料。** IPA公開、第9回AI事業者ガイドライン検討会・資料4「AI事業者ガイドライン（第1.2版案）本編」、2026年3月5日。変更履歴付きの案であり、最終版そのものではありません。案のページ番号を最終版に転用しません。
 
 **[S3] 補助資料。** IPA公開、同検討会・資料11「AI事業者ガイドライン活用の手引き（案）」、2026年3月5日。役割整理・活用の補助であり、本文や最終版の同一性確認の代替ではありません。
+
+**[S4] AISIとの接続に用いた一次資料。** AISI事業実証ワーキンググループ「ビジョンペーパー（第2.0版）」、2026年10月6日公表。[公表ページ][S4]／[本文PDF](https://aisi.go.jp/assets/pdf/VisionPaper_v2.0_jp.pdf)。4.2.1–4.2.2（本文36–37ページ）のエビデンス設計・論証構造型アプローチ、4.2.3（本文38ページ・図4-5）のCCASを参照。ページ番号はPDFビューアの枚数ではなく、本文に印刷された番号です。記載されているのは構想・取組み方針であり、本リポジトリに対する要求仕様・承認ではありません。
+
+**[S5] 観測と制御との接点に用いた一次資料。** AISI「AIセーフティに関する評価観点ガイド（第1.20版）」、2026年7月7日公表。[公表ページ][S5]／[本文PDF](https://aisi.go.jp/assets/pdf/ai_safety_eval_v1.20_ja.pdf)。3.11.1–3.11.2（本文35–38ページ）を参照。評価項目例と本形式モデルの対応は選択的・技術的なもので、同ガイド全体への適合判定ではありません。
 
 **技術的基盤。** 提供されたEU版Lean、日本版Lean、改訂READMEを参照し、公開範囲と証明境界を組み直しました。Kernelは[指定コミット](https://github.com/GhostDriftTheory/responsibility-os-kernel/blob/9b4e7d25572f3a1e114508bdf1a2d62349e83993/ResponsibilityOS.lean)の外部依存です。具体的な非公開実装をこの配布物へ含めていません。
 
@@ -220,9 +294,13 @@ This is a **public abstract assurance profile**, not a compliance certificate or
 
 `no_silent_responsibility_gap` derives a finite-history composition result: exact retained-history equality against a no-pruning reference run, validation provenance strictly before the captured execution, all-stage scope and binding consequences, preservation of each record's **historical** policy, and an exhaustive current-support/review partition. Policy-aware views are permitted; full recoverability is only a sufficient alternative. The headline conclusion is not assumed for every output record.
 
-The concrete checker is not verified by hiding its body. An adapter must independently discharge the declared local obligations and establish correspondence to deployment. The source retains only a deliberately degenerate existence witness: context, basis, use, actor and validation input are singleton types, and control has two states. It demonstrates satisfiable local obligations, an actually retained execution and the kernel's nonempty trace policy, not a production adapter or a concrete multi-actor protocol. **This Lean source has passed GitHub Actions build verification and a warnings-as-errors source check with Lean 4.26.0.** The exact-commit CI result remains authoritative; successful verification of the public formalization does not certify any undisclosed adapter implementation or establish full guideline compliance. Previous finite Python-model results are not reused as verification of this revision.
+The concrete checker is not verified by hiding its body. An adapter must independently discharge the declared local obligations and establish correspondence to deployment. The source retains only a deliberately degenerate existence witness: context, basis, use, actor and validation input are singleton types, and control has two states. It demonstrates satisfiable local obligations, an actually retained execution and the kernel's nonempty trace policy, not a production adapter or a concrete multi-actor protocol. **The supplied README records a successful GitHub Actions build and warnings-as-errors check of the existing `JPAIGuidelinesMapping.lean` with Lean 4.26.0. This is not a verification result for the new file.** The exact-commit CI result for both files remains authoritative; successful verification of the public formalization does not certify any undisclosed adapter implementation or establish full guideline compliance. Previous finite Python-model results are not reused as verification of this revision.
 
 The guideline crosswalk inherits the supplied README's report of final-v1.2 clause-number/actor-structure reconciliation. This abstraction revision did not independently re-fetch or reconcile the final guideline text. Formal source checking, guideline interpretation and private implementation verification remain separate.
+
+`AISICompositionalAssuranceCase.lean` adds theorem-only consequences over the existing abstract interfaces. It relates selected questions from Japan AISI’s argumentation-based conformity assessment, CCAS vision and agent observation/control guide to explicit claims, local obligations, public proofs and remaining operational checks. It introduces no concrete adapter, packet format, receipt check, revocation algorithm or expanded example. `compositional_assurance_case` retains the original finite-history conclusion and joins it with fail-closed admission and the conditional positive gate branch; it does not assume checker completeness. The earlier-validation witness comes from an actual command occurrence within the modeled prefix preceding capture. These are technical review contributions, not AISI-approved mappings or an implementation/certification of CCAS.[S4][S5]
+
+The updated workflow builds the existing mapping, directly checks both Lean sources with warnings as errors, and records the commit, source hashes and resolved dependencies. **The addition has not been compiled in this preparation environment.** Do not reuse the original mapping’s earlier green result as a successful check of this addition. No changes are required to the existing Kernel, mapping source, minimal existence witness, Lake configuration, toolchain or cold-chain PoC.
 
 ## License
 
