@@ -48,3 +48,32 @@ jobs:
         run: |
           set -euo pipefail
           lake env lean -DwarningAsError=true JPAIGuidelinesMapping.lean
+
+      - name: Verify AISI assurance case with warnings as errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean -DwarningAsError=true AISICompositionalAssuranceCase.lean
+
+      - name: Record verification basis
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo '## Public abstract assurance verification'
+            printf 'Commit: `%s`\n\n' "$GITHUB_SHA"
+            echo 'The mapping build and both warnings-as-errors source checks succeeded in this run.'
+            echo 'Scope: public formalization only; not operational safety or AISI certification.'
+            echo
+            echo '### Toolchain and source hashes'
+            echo '```text'
+            lake env lean --version
+            sha256sum JPAIGuidelinesMapping.lean AISICompositionalAssuranceCase.lean lakefile.toml lean-toolchain
+            echo '```'
+            echo
+            echo '### Resolved dependencies'
+            echo '```json'
+            cat lake-manifest.json
+            echo
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
